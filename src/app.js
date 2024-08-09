@@ -11,12 +11,17 @@ app.use(morgan('dev'))
 app.use(helmet())
 app.use(compression())
 app.use(express.json());
-
+app.use(express.urlencoded({
+    extended: true,
+    // support parsing of application/x-www-form-urlencoded encoded data
+    // default: false
+    // true for parsing JSON bodies
+}));
 
 // init database
-require('./dbs/init.mongodb')
-    // const { checkOverload } = require('./helpers/check.connect')
-    // checkOverload()
+require('./dbs/init.mongodb');
+// const { checkOverload } = require('./helpers/check.connect')
+// checkOverload()
 
 // init routes
 app.use('/', require('./routes'));
