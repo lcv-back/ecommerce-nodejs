@@ -16,7 +16,7 @@ const createTokenPair = async(payload, publicKey, privateKey) => {
             expiresIn: '7 days',
         });
 
-        // access token same as refresh token different by expires 
+        // access token same as refresh token different by expired
 
         JWT.verify(accessToken, publicKey, (err, decoded) => {
             if (err) {
