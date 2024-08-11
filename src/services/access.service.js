@@ -48,6 +48,7 @@ class AccessService {
                 // save private key to sign the token
                 // save public key to verify the token
 
+                /* that way was deployed on large systems
                 const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
                     modulusLength: 4096,
                     publicKeyEncoding: {
@@ -59,32 +60,36 @@ class AccessService {
                         format: 'pem'
                     }
                 });
+                */
+
+                // the easy way on personal project
+                const privateKey = crypto.randomBytes(64).toString('hex');
+                const publicKey = crypto.randomBytes(64).toString('hex');
 
                 // pkcs1: public key cryptography standards 1
 
                 console.log({ privateKey, publicKey }); // save to collections keyStore
 
-                const publicKeyString = await KeyTokenService.createKeyToken({
+                const keyStore = await KeyTokenService.createKeyToken({
                     userId: newShop._id,
-                    publicKey
+                    publicKey,
+                    privateKey
                 });
 
-                if (!publicKeyString) {
+                if (!keyStore) {
                     return {
                         code: 'xxxx',
-                        message: 'Public key string error',
+                        message: 'Key store cannot be created',
                         status: 'error'
                     }
                 }
-
-                const publicKeyObject = crypto.createPublicKey(publicKeyString);
 
                 // created token pair
                 const tokens = await createTokenPair({
                         userId: newShop._id,
                         email
                     },
-                    publicKeyString,
+                    publicKey,
                     privateKey
                 );
 
@@ -105,6 +110,7 @@ class AccessService {
             }
 
         } catch (error) {
+            console.error(error);
             return error;
         }
     }
