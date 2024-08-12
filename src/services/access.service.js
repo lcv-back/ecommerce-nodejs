@@ -7,6 +7,7 @@ const { createTokenPair } = require('../auth/authUtils');
 const shopModel = require('../models/shop.model');
 const { getInfoData } = require('../utils');
 const { BadRequestError, ConflictRequestError } = require('../core/error.response');
+const { findByEmail } = require('../services/shop.service');
 
 const RoleShop = {
     SHOP: 'SHOP',
@@ -99,6 +100,23 @@ class AccessService {
             code: 200,
             metadata: null
         }
+
+    }
+
+    static login = async({ email, password, refreshToken = null }) => {
+        /*
+            step by step
+            step 1: check email in dbs
+            step 2: check password can match?
+            step 3: create access token and refresh token and save it
+            step 4: generate tokens
+            step 5: get data return login
+        */
+
+        const foundShop = await findByEmail({ email });
+        if (!foundShop) throw new BadRequestError('Shop is not registered');
+
+        const matchPassword = bcrypt.compare(password, foundShop.password);
 
     }
 }
